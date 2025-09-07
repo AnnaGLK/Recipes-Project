@@ -126,5 +126,15 @@ updateRecipe(id, data) {
   };
 
   return recipes[index];
-}
+},
+
+deleteRecipe(id) {
+  const index = recipes.findIndex(r => r.id === id);
+  if (index === -1) return false;
+
+  recipes.splice(index, 1); // remove recipe
+  return true;
+},
+
+
 };

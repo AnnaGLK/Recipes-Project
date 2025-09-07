@@ -65,3 +65,16 @@ export const updateRecipe = (req, res) => {
 
   return res.status(200).json(updatedRecipe);
 };
+
+export const deleteRecipe = (req, res) => {
+  const { id } = req.params;
+
+  const deleted = RecipeModel.deleteRecipe(id);
+
+  if (!deleted) {
+    return res.status(404).json({ message: `Recipe with id '${id}' not found` });
+  }
+
+  // 204 = No Content
+  return res.status(204).send();
+};
