@@ -1,4 +1,6 @@
-// Seed data so you see results immediately
+import { v4 as uuidv4 } from "uuid";
+
+// Seed data for recipes
 let recipes = [
   {
     id: "r-1001",
@@ -93,5 +95,24 @@ export const RecipeModel = {
   findById(id) {
     return recipes.find(r => r.id === id);
   },
-  
+
+  createRecipe(data) {
+  const newRecipe = {
+    id: uuidv4(),
+    title: data.title,
+    description: data.description,
+    ingredients: data.ingredients,
+    instructions: data.instructions,
+    cookingTime: data.cookingTime,
+    servings: data.servings,
+    difficulty: data.difficulty,
+    rating: data.rating ?? 0, // default 0 if not provided
+    createdAt: new Date().toISOString(),
+  };
+
+  recipes.push(newRecipe);
+  return newRecipe;
+},
+
+
 };

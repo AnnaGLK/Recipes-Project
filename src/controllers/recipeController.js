@@ -17,3 +17,25 @@ export const getRecipeById = (req, res) => {
 
   return res.status(200).json(recipe);
 };
+
+export const createRecipe = (req, res) => {
+  const { title, description, ingredients, instructions, cookingTime, servings, difficulty, rating } = req.body;
+
+  if (!title || !description || !ingredients || !instructions || !cookingTime || !servings || !difficulty) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+
+  const newRecipe = RecipeModel.createRecipe({
+    title,
+    description,
+    ingredients,
+    instructions,
+    cookingTime,
+    servings,
+    difficulty,
+    rating: rating || 0,
+  });
+
+  return res.status(201).json(newRecipe);
+};
+
