@@ -39,3 +39,29 @@ export const createRecipe = (req, res) => {
   return res.status(201).json(newRecipe);
 };
 
+export const updateRecipe = (req, res) => {
+  const { id } = req.params;
+  const { title, description, ingredients, instructions, cookingTime, servings, difficulty, rating } = req.body;
+
+  // basic validation
+  if (!title && !description && !ingredients && !instructions && !cookingTime && !servings && !difficulty && !rating) {
+    return res.status(400).json({ message: "No valid fields provided for update" });
+  }
+
+  const updatedRecipe = RecipeModel.updateRecipe(id, {
+    title,
+    description,
+    ingredients,
+    instructions,
+    cookingTime,
+    servings,
+    difficulty,
+    rating,
+  });
+
+  if (!updatedRecipe) {
+    return res.status(404).json({ message: `Recipe with id '${id}' not found` });
+  }
+
+  return res.status(200).json(updatedRecipe);
+};

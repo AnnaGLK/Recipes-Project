@@ -114,5 +114,17 @@ export const RecipeModel = {
   return newRecipe;
 },
 
+updateRecipe(id, data) {
+  const index = recipes.findIndex(r => r.id === id);
+  if (index === -1) return null;
 
+  // keep existing recipe, overwrite with new fields
+  recipes[index] = {
+    ...recipes[index],
+    ...data,
+    id, // ensure ID is not changed
+  };
+
+  return recipes[index];
+}
 };
