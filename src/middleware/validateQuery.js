@@ -3,8 +3,13 @@ const ALLOWED_DIFFICULTY = ["easy", "medium", "hard"];
 export const validateQuery = (req, res, next) => {
   const { difficulty, maxCookingTime, search } = req.query;
 
+  // difficulty is required
+  if (!difficulty) {
+    return res.status(400).json({ message: "Difficulty is required" });
+  }
+
   // difficulty must be one of allowed (if present)
-  if (difficulty && !ALLOWED_DIFFICULTY.includes(difficulty)) {
+  if (!ALLOWED_DIFFICULTY.includes(difficulty)) {
     return res.status(400).json({
       message: `Invalid difficulty. Allowed: ${ALLOWED_DIFFICULTY.join(", ")}`
     });
@@ -24,6 +29,7 @@ export const validateQuery = (req, res, next) => {
   if (search !== undefined && typeof search !== "string") {
     return res.status(400).json({ message: "search must be a string" });
   }
+
 
   next();
 };
