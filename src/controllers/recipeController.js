@@ -12,16 +12,35 @@ export const getRecipeById = (req, res) => {
   const recipe = RecipeModel.findById(id);
 
   if (!recipe) {
-    return res.status(404).json({ message: `Recipe with id '${id}' not found` });
+    return res
+      .status(404)
+      .json({ message: `Recipe with id '${id}' not found` });
   }
 
   return res.status(200).json(recipe);
 };
 
 export const createRecipe = (req, res) => {
-  const { title, description, ingredients, instructions, cookingTime, servings, difficulty, rating } = req.body;
+  const {
+    title,
+    description,
+    ingredients,
+    instructions,
+    cookingTime,
+    servings,
+    difficulty,
+    rating,
+  } = req.body;
 
-  if (!title || !description || !ingredients || !instructions || !cookingTime || !servings || !difficulty) {
+  if (
+    !title ||
+    !description ||
+    !ingredients ||
+    !instructions ||
+    !cookingTime ||
+    !servings ||
+    !difficulty
+  ) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
@@ -41,11 +60,31 @@ export const createRecipe = (req, res) => {
 
 export const updateRecipe = (req, res) => {
   const { id } = req.params;
-  const { title, description, ingredients, instructions, cookingTime, servings, difficulty, rating } = req.body;
+  const {
+    title,
+    description,
+    ingredients,
+    instructions,
+    cookingTime,
+    servings,
+    difficulty,
+    rating,
+  } = req.body;
 
   // basic validation
-  if (!title && !description && !ingredients && !instructions && !cookingTime && !servings && !difficulty && !rating) {
-    return res.status(400).json({ message: "No valid fields provided for update" });
+  if (
+    !title &&
+    !description &&
+    !ingredients &&
+    !instructions &&
+    !cookingTime &&
+    !servings &&
+    !difficulty &&
+    !rating
+  ) {
+    return res
+      .status(400)
+      .json({ message: "No valid fields provided for update" });
   }
 
   const updatedRecipe = RecipeModel.updateRecipe(id, {
@@ -60,7 +99,9 @@ export const updateRecipe = (req, res) => {
   });
 
   if (!updatedRecipe) {
-    return res.status(404).json({ message: `Recipe with id '${id}' not found` });
+    return res
+      .status(404)
+      .json({ message: `Recipe with id '${id}' not found` });
   }
 
   return res.status(200).json(updatedRecipe);
@@ -72,9 +113,16 @@ export const deleteRecipe = (req, res) => {
   const deleted = RecipeModel.deleteRecipe(id);
 
   if (!deleted) {
-    return res.status(404).json({ message: `Recipe with id '${id}' not found` });
+    return res
+      .status(404)
+      .json({ message: `Recipe with id '${id}' not found` });
   }
 
   // 204 = No Content
   return res.status(204).send();
+};
+
+export const getRecipeStats = (req, res) => {
+  const stats = RecipeModel.getStats();
+  return res.status(200).json(stats);
 };

@@ -12,7 +12,7 @@ let recipes = [
     servings: 2,
     difficulty: "easy",
     rating: 4.3,
-    createdAt: "2025-01-01T12:00:00.000Z"
+    createdAt: "2025-01-01T12:00:00.000Z",
   },
   {
     id: "r-1002",
@@ -24,7 +24,7 @@ let recipes = [
     servings: 2,
     difficulty: "easy",
     rating: 4.6,
-    createdAt: "2025-01-03T09:15:00.000Z"
+    createdAt: "2025-01-03T09:15:00.000Z",
   },
   {
     id: "r-1003",
@@ -36,7 +36,7 @@ let recipes = [
     servings: 3,
     difficulty: "medium",
     rating: 4.1,
-    createdAt: "2025-01-05T18:30:00.000Z"
+    createdAt: "2025-01-05T18:30:00.000Z",
   },
   {
     id: "r-1004",
@@ -48,7 +48,7 @@ let recipes = [
     servings: 4,
     difficulty: "hard",
     rating: 4.8,
-    createdAt: "2025-01-08T20:00:00.000Z"
+    createdAt: "2025-01-08T20:00:00.000Z",
   },
   {
     id: "r-1005",
@@ -60,8 +60,8 @@ let recipes = [
     servings: 1,
     difficulty: "easy",
     rating: 4.0,
-    createdAt: "2025-01-10T07:45:00.000Z"
-  }
+    createdAt: "2025-01-10T07:45:00.000Z",
+  },
 ];
 
 export const RecipeModel = {
@@ -70,20 +70,20 @@ export const RecipeModel = {
 
     // difficulty filter (exact match)
     if (filters.difficulty) {
-      result = result.filter(r => r.difficulty === filters.difficulty);
+      result = result.filter((r) => r.difficulty === filters.difficulty);
     }
 
     // maxCookingTime (<=)
     if (filters.maxCookingTime != null) {
       const max = Number(filters.maxCookingTime);
-      result = result.filter(r => r.cookingTime <= max);
+      result = result.filter((r) => r.cookingTime <= max);
     }
 
     // search in title + description (case-insensitive)
     if (filters.search) {
       const q = String(filters.search).toLowerCase();
       result = result.filter(
-        r =>
+        (r) =>
           r.title.toLowerCase().includes(q) ||
           r.description.toLowerCase().includes(q)
       );
@@ -93,48 +93,81 @@ export const RecipeModel = {
   },
 
   findById(id) {
-    return recipes.find(r => r.id === id);
+    return recipes.find((r) => r.id === id);
   },
 
   createRecipe(data) {
-  const newRecipe = {
-    id: uuidv4(),
-    title: data.title,
-    description: data.description,
-    ingredients: data.ingredients,
-    instructions: data.instructions,
-    cookingTime: data.cookingTime,
-    servings: data.servings,
-    difficulty: data.difficulty,
-    rating: data.rating ?? 0, // default 0 if not provided
-    createdAt: new Date().toISOString(),
-  };
+    const newRecipe = {
+      id: uuidv4(),
+      title: data.title,
+      description: data.description,
+      ingredients: data.ingredients,
+      instructions: data.instructions,
+      cookingTime: data.cookingTime,
+      servings: data.servings,
+      difficulty: data.difficulty,
+      rating: data.rating ?? 0, // default 0 if not provided
+      createdAt: new Date().toISOString(),
+    };
 
-  recipes.push(newRecipe);
-  return newRecipe;
-},
+    recipes.push(newRecipe);
+    return newRecipe;
+  },
 
-updateRecipe(id, data) {
-  const index = recipes.findIndex(r => r.id === id);
-  if (index === -1) return null;
+  updateRecipe(id, data) {
+    const index = recipes.findIndex((r) => r.id === id);
+    if (index === -1) return null;
 
-  // keep existing recipe, overwrite with new fields
-  recipes[index] = {
-    ...recipes[index],
-    ...data,
-    id, // ensure ID is not changed
-  };
+    // keep existing recipe, overwrite with new fields
+    recipes[index] = {
+      ...recipes[index],
+      ...data,
+      id, // ensure ID is not changed
+    };
 
-  return recipes[index];
-},
+    return recipes[index];
+  },
 
-deleteRecipe(id) {
-  const index = recipes.findIndex(r => r.id === id);
-  if (index === -1) return false;
+  deleteRecipe(id) {
+    const index = recipes.findIndex((r) => r.id === id);
+    if (index === -1) return false;
 
-  recipes.splice(index, 1); // remove recipe
-  return true;
-},
+    recipes.splice(index, 1); // remove recipe
+    return true;
+  },
 
+  getStats() {
+    const totalRecipes = recipes.length;
 
+    const avgCookingTime =
+      totalRecipes > 0
+        ? recipes.reduce((sum, r) => sum + r.cookingTime, 0) / totalRecipes
+        : 0;
+
+    // group by difficulty
+    const recipesByDifficulty = recipes.reduce((acc, r) => {
+      acc[r.difficulty] = (acc[r.difficulty] || 0) + 1;
+      return acc;
+    }, {});
+
+    // bonus: most common ingredients
+    const ingredientCount = {};
+    recipes.forEach((r) => {
+      r.ingredients.forEach((ing) => {
+        ingredientCount[ing] = (ingredientCount[ing] || 0) + 1;
+      });
+    });
+
+    const mostCommonIngredients = Object.entries(ingredientCount)
+      .sort((a, b) => b[1] - a[1]) // sort by frequency
+      .slice(0, 5) // top 5
+      .map(([ingredient, count]) => ({ ingredient, count }));
+
+    return {
+      totalRecipes,
+      avgCookingTime: Number(avgCookingTime.toFixed(2)),
+      recipesByDifficulty,
+      mostCommonIngredients,
+    };
+  }
 };
