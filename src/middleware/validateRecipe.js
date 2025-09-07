@@ -1,5 +1,5 @@
 export const validateRecipe = (req, res, next) => {
-  const { title, description } = req.body;
+  const { title, description, ingredients } = req.body;
 
   // title is required
   if (!title) {
@@ -27,11 +27,26 @@ export const validateRecipe = (req, res, next) => {
   if (typeof description !== "string") {
     return res.status(400).json({ message: "Description must be a string" });
   }
-  
+
   // description length check
   if (description.length < 10 || description.length > 500) {
     return res.status(400).json({
       message: "Description must be between 10 and 500 characters",
+    });
+  }
+
+  // ingredients is required
+  if (!ingredients) {
+    return res.status(400).json({ message: "Ingredients are required" });
+  }
+
+  if (!Array.isArray(ingredients)) {
+    return res.status(400).json({ message: "Ingredients must be an array" });
+  }
+
+  if (ingredients.length < 1) {
+    return res.status(400).json({
+      message: "Ingredients array must contain at least 1 item",
     });
   }
 
