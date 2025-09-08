@@ -1,5 +1,14 @@
+const ALLOWED_DIFFICULTY = ["easy", "medium", "hard"];
 export const validateRecipe = (req, res, next) => {
-  const { title, description, ingredients, instructions, cookingTime, servings, difficulty } = req.body;
+  const {
+    title,
+    description,
+    ingredients,
+    instructions,
+    cookingTime,
+    servings,
+    difficulty,
+  } = req.body;
 
   // title is required
   if (!title) {
@@ -61,28 +70,43 @@ export const validateRecipe = (req, res, next) => {
 
   if (instructions.length < 1) {
     return res.status(400).json({
-      message: "Instructions array must contain at least 1 item"
+      message: "Instructions array must contain at least 1 item",
     });
   }
 
-   // cookingTime is required
+  // cookingTime is required
   if (cookingTime === undefined || cookingTime === null) {
     return res.status(400).json({ message: "Cooking time is required" });
   }
 
   if (typeof cookingTime !== "number" || cookingTime <= 0) {
-    return res.status(400).json({ message: "Cooking time must be a positive number" });
+    return res
+      .status(400)
+      .json({ message: "Cooking time must be a positive number" });
   }
 
-// servings is required
+  // servings is required
   if (servings === undefined || servings === null) {
     return res.status(400).json({ message: "Servings is required" });
   }
 
   if (!Number.isInteger(servings) || servings <= 0) {
-    return res.status(400).json({ message: "Servings must be a positive integer" });
+    return res
+      .status(400)
+      .json({ message: "Servings must be a positive integer" });
   }
 
+  // 🆕 difficulty is required
+  if (!difficulty) {
+    return res.status(400).json({ message: "Difficulty is required" });
+  }
+
+  // 🆕 must be one of allowed values
+  if (!ALLOWED_DIFFICULTY.includes(difficulty)) {
+    return res.status(400).json({
+      message: `Difficulty must be one of: ${ALLOWED_DIFFICULTY.join(", ")}`,
+    });
+  }
 
   // ✅ all good → move on
   next();
